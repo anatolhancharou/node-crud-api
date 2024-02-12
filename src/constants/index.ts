@@ -15,11 +15,11 @@ export enum StatusCode {
 }
 
 export enum ResponseMessage {
-  BAD_REQUEST = 'Bad request',
   USER_NOT_FOUND = 'User not found',
-  INVALID_ID = 'Invalid user ID',
+  INVALID_USER_ID = 'Invalid user ID',
   INTERNAL_SERVER_ERROR = 'Internal server error',
-  INVALID_URL = 'Invalid endpoint',
+  INVALID_ENDPOINT = 'Invalid endpoint',
+  INVALID_REQUEST_BODY = 'Invalid request body',
 }
 
 export const BASE_URL = '/api/users';

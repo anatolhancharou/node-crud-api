@@ -1,9 +1,10 @@
 import { IncomingMessage, ServerResponse } from 'node:http';
 import { v4 as uuidv4 } from 'uuid';
 import { IUser } from '../types';
-import { getRequestUserData, isUserDataValid, setResponse } from '../helpers';
+import { dataBase } from '../data-base';
+import { isUserDataValid } from '../helpers';
+import { getRequestUserData, setResponse } from '../services';
 import { StatusCode, ResponseMessage } from '../constants';
-import { users } from '../data-base';
 
 export const handleUserCreation = async (
   req: IncomingMessage,
@@ -15,7 +16,7 @@ export const handleUserCreation = async (
     return setResponse(
       res,
       StatusCode.BAD_REQUEST,
-      JSON.stringify({ message: ResponseMessage.BAD_REQUEST }),
+      JSON.stringify({ message: ResponseMessage.INVALID_REQUEST_BODY }),
     );
   }
 
@@ -28,7 +29,7 @@ export const handleUserCreation = async (
     hobbies,
   };
 
-  users.push(newUser);
+  dataBase.addNewUser(newUser);
 
   setResponse(res, StatusCode.CREATED, JSON.stringify(newUser));
 };

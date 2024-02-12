@@ -1,20 +1,15 @@
 import { ServerResponse } from 'node:http';
 import { validate } from 'uuid';
-import { users } from '../data-base';
-import { setResponse } from '../helpers';
+import { dataBase } from '../data-base';
+import { setResponse } from '../services';
 import { StatusCode, ResponseMessage } from '../constants';
 
-export const handleUserDeletion = (
-  res: ServerResponse,
-  id: string | undefined,
-) => {
-  if (id && validate(id)) {
-    const index = users.findIndex((user) => user.id === id);
-
-    if (index !== -1) {
-      users.splice(index, 1);
+export const handleUserDeletion = (res: ServerResponse, id: string) => {
+  if (validate(id)) {
+    try {
+      dataBase.deleteUser(id);
       setResponse(res, StatusCode.NO_CONTENT);
-    } else {
+    } catch {
       setResponse(
         res,
         StatusCode.NOT_FOUND,
@@ -25,7 +20,7 @@ export const handleUserDeletion = (
     setResponse(
       res,
       StatusCode.BAD_REQUEST,
-      JSON.stringify({ message: ResponseMessage.INVALID_ID }),
+      JSON.stringify({ message: ResponseMessage.INVALID_USER_ID }),
     );
   }
 };

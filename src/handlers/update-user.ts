@@ -1,35 +1,34 @@
 import { IncomingMessage, ServerResponse } from 'node:http';
 import { validate } from 'uuid';
 import { IUser } from '../types';
-import { getRequestUserData, isUserDataValid, setResponse } from '../helpers';
+import { dataBase } from '../data-base';
+import { isUserDataValid } from '../helpers';
+import { getRequestUserData, setResponse } from '../services';
 import { StatusCode, ResponseMessage } from '../constants';
-import { users } from '../data-base';
 
 export const handleUserUpdate = async (
   req: IncomingMessage,
   res: ServerResponse,
-  id: string | undefined,
+  id: string,
 ): Promise<void> => {
-  if (id && validate(id)) {
+  if (validate(id)) {
     const userData: IUser | void = await getRequestUserData(req);
 
     if (!userData || !isUserDataValid(userData)) {
       return setResponse(
         res,
         StatusCode.BAD_REQUEST,
-        JSON.stringify({ message: ResponseMessage.BAD_REQUEST }),
+        JSON.stringify({ message: ResponseMessage.INVALID_REQUEST_BODY }),
       );
     }
 
-    const index = users.findIndex((user) => user.id === id);
+    const { username, age, hobbies } = userData;
+    const newUserData = { id, username, age, hobbies };
 
-    if (index !== -1) {
-      const { username, age, hobbies } = userData;
-
-      users[index] = { ...users[index], username, age, hobbies } as IUser;
-
-      setResponse(res, StatusCode.OK, JSON.stringify(users[index]));
-    } else {
+    try {
+      dataBase.updateUser(newUserData);
+      setResponse(res, StatusCode.OK, JSON.stringify(newUserData));
+    } catch {
       setResponse(
         res,
         StatusCode.NOT_FOUND,
@@ -40,7 +39,7 @@ export const handleUserUpdate = async (
     setResponse(
       res,
       StatusCode.BAD_REQUEST,
-      JSON.stringify({ message: ResponseMessage.BAD_REQUEST }),
+      JSON.stringify({ message: ResponseMessage.INVALID_USER_ID }),
     );
   }
 };

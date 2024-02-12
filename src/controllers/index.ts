@@ -1,5 +1,6 @@
 import { IncomingMessage, ServerResponse } from 'node:http';
-import { removeTrailingSlash, setResponse } from '../helpers';
+import { removeTrailingSlash } from '../helpers';
+import { setResponse } from '../services';
 import {
   BASE_URL,
   StatusCode,
@@ -20,23 +21,16 @@ export const handleRequests = async (
 ): Promise<void> => {
   const { method, url } = req;
   const reqUrl = url && removeTrailingSlash(url);
-  const urlMatchedContents = reqUrl?.split(`${BASE_URL}/`) || [];
-
-  if (reqUrl !== BASE_URL && urlMatchedContents.length < 2) {
-    return setResponse(
-      res,
-      StatusCode.NOT_FOUND,
-      JSON.stringify({ message: ResponseMessage.INVALID_URL }),
-    );
-  }
+  const splittedUrl = reqUrl?.split(`${BASE_URL}/`) || [];
+  const userId = splittedUrl.length === 2 ? splittedUrl.pop() : undefined;
 
   switch (method) {
     case RequestMethod.GET:
       if (reqUrl === BASE_URL) {
         return handleGetAllUsersRequest(res);
       }
-      if (urlMatchedContents.length > 1) {
-        return handleGetUserByIdRequest(res, urlMatchedContents[1]);
+      if (userId) {
+        return handleGetUserByIdRequest(res, userId);
       }
       break;
     case RequestMethod.POST:
@@ -45,20 +39,20 @@ export const handleRequests = async (
       }
       break;
     case RequestMethod.PUT:
-      if (urlMatchedContents.length > 1) {
-        return await handleUserUpdate(req, res, urlMatchedContents[1]);
+      if (userId) {
+        return await handleUserUpdate(req, res, userId);
       }
       break;
     case RequestMethod.DELETE:
-      if (urlMatchedContents.length > 1) {
-        return handleUserDeletion(res, urlMatchedContents[1]);
+      if (userId) {
+        return handleUserDeletion(res, userId);
       }
       break;
   }
 
   setResponse(
     res,
-    StatusCode.BAD_REQUEST,
-    JSON.stringify({ message: ResponseMessage.BAD_REQUEST }),
+    StatusCode.NOT_FOUND,
+    JSON.stringify({ message: ResponseMessage.INVALID_ENDPOINT }),
   );
 };

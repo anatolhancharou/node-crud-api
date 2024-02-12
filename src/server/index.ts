@@ -1,7 +1,7 @@
 import http from 'node:http';
-import { handleRequests } from './controllers';
-import { setResponse } from './helpers';
-import { StatusCode, ResponseMessage } from './constants';
+import { handleRequests } from '../controllers';
+import { setResponse } from '../services';
+import { StatusCode, ResponseMessage } from '../constants';
 
 export const server: http.Server = http.createServer(async (req, res) => {
   res.setHeader('Content-Type', 'application/json');
