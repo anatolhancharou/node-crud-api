@@ -5,9 +5,10 @@
 ### Prerequisites
 
 1. Go to folder `node-crude-api`
-2. Install all dependencies using [`npm install`](https://docs.npmjs.com/cli/install)
-3. Rename `.env.example` to `.env`
-4. Run **scripts** in command line.
+2. Switch to branch `develop`
+3. Install all dependencies using [`npm install`](https://docs.npmjs.com/cli/install)
+4. Rename `.env.example` to `.env`
+5. Run **scripts** in command line.
 
 ---
 
