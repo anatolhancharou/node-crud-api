@@ -13,7 +13,7 @@ export const setResponse = (
 export const getRequestUserData = (
   req: IncomingMessage,
 ): Promise<IUser | void> => {
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     let data = '';
 
     req.on('data', (chunk) => {
@@ -27,6 +27,10 @@ export const getRequestUserData = (
       } catch {
         resolve();
       }
+    });
+
+    req.on('error', () => {
+      reject();
     });
   });
 };

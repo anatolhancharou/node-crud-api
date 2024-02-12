@@ -22,7 +22,7 @@ export const handleRequests = async (
   const { method, url } = req;
   const reqUrl = url && removeTrailingSlash(url);
   const splittedUrl = reqUrl?.split(`${BASE_URL}/`) || [];
-  const userId = splittedUrl.length === 2 ? splittedUrl.pop() : undefined;
+  const userId = splittedUrl.length === 2 ? splittedUrl.pop() : null;
 
   switch (method) {
     case RequestMethod.GET:
